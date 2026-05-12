@@ -1,10 +1,11 @@
 import { Separator } from "@heroui/react";
+import Link from "next/link";
 
 const Banner = () => {
   return (
     <div className="bg-[url('/assets/banner.png')] text-white flex justify-between flex-col items-center gap-5 h-200 relative overflow-hidden">
       {/* Animated overlay gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30 animate-pulse"></div>
+      <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black/30 animate-pulse"></div>
       
       <div className="p-10 text-center space-y-3 flex justify-center flex-col items-center gap-3.5 flex-1 relative z-10">
         <h1 className="text-7xl font-bold transition-all duration-500 hover:scale-105 hover:text-cyan-200 animate-fade-in">
@@ -21,9 +22,9 @@ const Banner = () => {
             Explore Now
           </button>
 
-          <button className="uppercase px-5 py-3 bg-white/50 cursor-pointer transition-all duration-300 hover:bg-white/70 hover:scale-110 hover:shadow-xl hover:shadow-white/30 transform hover:-translate-y-1">
+          <Link href={"/destinations"} className="uppercase px-5 py-3 bg-white/50 cursor-pointer transition-all duration-300 hover:bg-white/70 hover:scale-110 hover:shadow-xl hover:shadow-white/30 transform hover:-translate-y-1">
             View Destination
-          </button>
+          </Link>
         </div>
       </div>
 

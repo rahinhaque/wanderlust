@@ -6,10 +6,10 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Left Navigation Links */}
         <div className="flex gap-6">
-          <a href="#" className="text-cyan-500 font-medium border-b-2 border-cyan-500 pb-1">Home</a>
-          <a href="#" className="text-gray-700 hover:text-cyan-500 font-medium">Destinations</a>
-          <a href="#" className="text-gray-700 hover:text-cyan-500 font-medium">My Bookings</a>
-          <a href="#" className="text-gray-700 hover:text-cyan-500 font-medium">Admin</a>
+          <a href={"/"} className="text-cyan-500 font-medium border-b-2 border-cyan-500 pb-1">Home</a>
+          <a href={"/destinations"} className="text-gray-700 hover:text-cyan-500 font-medium">Destinations</a>
+          <a href={"/bookings"} className="text-gray-700 hover:text-cyan-500 font-medium">My Bookings</a>
+          <a href={"/admin"} className="text-gray-700 hover:text-cyan-500 font-medium">Admin</a>
         </div>
 
         {/* Brand Name */}
@@ -23,10 +23,10 @@ const Navbar = () => {
             <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
-            <a href="#" className="text-gray-700 hover:text-cyan-500 font-medium">Profile</a>
+            <a href={"/profile"} className="text-gray-700 hover:text-cyan-500 font-medium">Profile</a>
           </div>
-          <a href="#" className="text-gray-700 hover:text-cyan-500 font-medium">Login</a>
-          <a href="#" className="text-gray-700 hover:text-cyan-500 font-medium">Sign Up</a>
+          <a href={"/login"} className="text-gray-700 hover:text-cyan-500 font-medium">Login</a>
+          <a href={"/signup"} className="text-gray-700 hover:text-cyan-500 font-medium">Sign Up</a>
         </div>
       </div>
     </nav>

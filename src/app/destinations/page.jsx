@@ -1,3 +1,5 @@
+import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { FaLocationDot, FaArrowRight, FaStar } from "react-icons/fa6";
 import { MdOutlineDateRange } from "react-icons/md";
@@ -58,12 +60,13 @@ const AllDestinations = async () => {
           <div key={destination._id} className="group bg-white overflow-hidden">
             {/* Image */}
             <div className="relative overflow-hidden">
-              <img
+              <Image
                 src={destination.imageUrl}
                 alt={destination.destinationName}
-                className="w-full h-[230px] object-cover group-hover:scale-105 duration-300"
+                width={500}
+                height={300}
+                className="w-full h-[230px] object-cover"
               />
-
               {/* Rating */}
               <div className="absolute top-3 right-3 bg-white px-2 py-1 flex items-center gap-1 text-sm font-semibold">
                 4.5 <FaStar className="text-black text-xs" />
@@ -100,10 +103,13 @@ const AllDestinations = async () => {
               </div>
 
               {/* Button */}
-              <button className="flex items-center gap-2 text-sky-500 font-medium uppercase tracking-wide hover:gap-3 duration-300">
+              <Link
+                href={`/destinations/${destination._id}`}
+                className="flex items-center gap-2 text-sky-500 font-medium uppercase tracking-wide hover:gap-3 duration-300"
+              >
                 Book Now
                 <FaArrowRight className="text-sm" />
-              </button>
+              </Link>
             </div>
           </div>
         ))}

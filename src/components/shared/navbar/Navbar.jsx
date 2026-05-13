@@ -11,8 +11,8 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Destinations", path: "/destinations" },
-    { name: "Add Destinations", path: "/add-destination" },
-    { name: "Admin", path: "/admin" },
+    { name: "My trips", path: "/my-trips" },
+    { name: "Admin", path: "/add-destination" },
   ];
 
   const authLinks = [
@@ -40,7 +40,7 @@ const Navbar = () => {
 
                 {/* Active Underline Animation */}
                 <span
-                  className={`absolute left-0 -bottom-1 h-[2px] bg-cyan-500 transition-all duration-300 ${
+                  className={`absolute left-0 -bottom-1 h-0.5 bg-cyan-500 transition-all duration-300 ${
                     isActive ? "w-full" : "w-0"
                   }`}
                 ></span>
@@ -52,7 +52,7 @@ const Navbar = () => {
         {/* Brand */}
         <Link
           href="/"
-          className="text-3xl font-black bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300"
+          className="text-3xl font-black bg-linear-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300"
         >
           Wanderlust
         </Link>

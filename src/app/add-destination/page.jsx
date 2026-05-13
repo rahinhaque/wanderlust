@@ -11,6 +11,7 @@ import {
   ListBox,
 } from "@heroui/react";
 import { motion } from "framer-motion";
+import { object } from "framer-motion/client";
 import {
   MapPinned,
   Globe,
@@ -34,9 +35,28 @@ const fadeUp = {
   }),
 };
 
+const onSubmit = async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.currentTarget);
+
+  const destination = Object.fromEntries(formData.entries());
+
+  const res = await fetch("http://localhost:5000/destinations", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(destination),
+  });
+
+  const data = await res.json();
+  console.log(data);
+};
+
 const AddDestination = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 px-4 py-10 overflow-hidden">
+    <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-cyan-950 px-4 py-10 overflow-hidden">
       {/* Glow Effects */}
       <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl"></div>
       <div className="absolute bottom-10 right-10 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl"></div>
@@ -62,7 +82,7 @@ const AddDestination = () => {
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-black bg-linear-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
               Add Destination
             </h1>
 
@@ -73,7 +93,7 @@ const AddDestination = () => {
           </motion.div>
 
           {/* Form */}
-          <form className="space-y-8">
+          <form className="space-y-8" onSubmit={onSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Destination Name */}
               <motion.div
@@ -269,7 +289,7 @@ const AddDestination = () => {
 
                   <TextArea
                     placeholder="Describe the travel experience..."
-                    className="rounded-3xl bg-white/10 border border-white/10 hover:border-cyan-400 focus-within:border-cyan-400 transition-all duration-300 min-h-[160px] text-white"
+                    className="rounded-3xl bg-white/10 border border-white/10 hover:border-cyan-400 focus-within:border-cyan-400 transition-all duration-300 min-h-40 text-white"
                   />
 
                   <FieldError />
@@ -286,7 +306,7 @@ const AddDestination = () => {
             >
               <Button
                 type="submit"
-                className="w-full h-14 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-lg shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+                className="w-full h-14 rounded-2xl bg-linear-to-r from-cyan-500 to-blue-600 text-white font-bold text-lg shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
               >
                 ✈ Add Destination
               </Button>

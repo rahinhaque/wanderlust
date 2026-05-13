@@ -69,10 +69,10 @@ const DestinationDetails = async ({ params }) => {
         </Link>
 
         <div className="flex gap-3">
-         <EditModal/>
-          <button className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50">
+         <EditModal destination={destination}/>
+          <Link href="/destinations" className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50">
             Cancel
-          </button>
+          </Link>
         </div>
       </div>
 

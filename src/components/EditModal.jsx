@@ -2,7 +2,8 @@
 
 import { Button, Input, Label, Modal, Surface, TextField } from "@heroui/react";
 
-export function EditModal() {
+export function EditModal({ destination }) {
+ const { destinationName, country, category, price ,  duration, departureDate, imageUrl, description} = destination;
   const onSubmit = async (e) => {
     e.preventDefault();
 
@@ -50,44 +51,44 @@ export function EditModal() {
             <Modal.Body className="p-6">
               <Surface variant="default">
                 <form onSubmit={onSubmit} className="flex flex-col gap-5">
-                  <TextField name="destinationName">
+                  <TextField defaultValue={destinationName} name="destinationName">
                     <Label>Destination Name</Label>
                     <Input placeholder="Bali Paradise" />
                   </TextField>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <TextField name="country">
+                    <TextField defaultValue={country} name="country">
                       <Label>Country</Label>
                       <Input placeholder="Indonesia" />
                     </TextField>
 
-                    <TextField name="category">
+                    <TextField defaultValue={category} name="category">
                       <Label>Category</Label>
                       <Input placeholder="Beach, Adventure, City" />
                     </TextField>
 
-                    <TextField name="price">
+                    <TextField defaultValue={price} name="price">
                       <Label>Price (USD)</Label>
                       <Input type="number" placeholder="1299" />
                     </TextField>
 
-                    <TextField name="duration">
+                    <TextField  defaultValue={duration} name="duration">
                       <Label>Duration</Label>
                       <Input placeholder="7 Days / 6 Nights" />
                     </TextField>
                   </div>
 
-                  <TextField name="departureDate">
+                  <TextField defaultValue={departureDate} name="departureDate">
                     <Label>Departure Date</Label>
                     <Input type="date" />
                   </TextField>
 
-                  <TextField name="imageUrl">
+                  <TextField defaultValue={imageUrl} name="imageUrl">
                     <Label>Image URL</Label>
                     <Input placeholder="https://example.com/image.jpg" />
                   </TextField>
 
-                  <TextField name="description">
+                  <TextField defaultValue={description} name="description">
                     <Label>Description</Label>
                     <Input placeholder="Describe the travel experience..." />
                   </TextField>

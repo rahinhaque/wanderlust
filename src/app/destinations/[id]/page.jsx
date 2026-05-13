@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { EditModal } from "@/components/EditModal";
 
 export const dynamic = "force-dynamic";
 
@@ -68,9 +69,7 @@ const DestinationDetails = async ({ params }) => {
         </Link>
 
         <div className="flex gap-3">
-          <button className="px-4 py-2 border rounded-md hover:bg-gray-100">
-            Edit
-          </button>
+         <EditModal/>
           <button className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50">
             Cancel
           </button>

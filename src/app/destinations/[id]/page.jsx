@@ -1,7 +1,9 @@
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { EditModal } from "@/components/EditModal";
+import { DeleteConfirmationModal } from "@/components/DeleteModal";
 
 export const dynamic = "force-dynamic";
 
@@ -70,9 +72,7 @@ const DestinationDetails = async ({ params }) => {
 
         <div className="flex gap-3">
          <EditModal destination={destination}/>
-          <Link href="/destinations" className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50">
-            Cancel
-          </Link>
+         <DeleteConfirmationModal destination={destination}/>
         </div>
       </div>
 

@@ -3,27 +3,28 @@
 import { Button, Input, Label, Modal, Surface, TextField } from "@heroui/react";
 
 export function EditModal({ destination }) {
- const { destinationName, country, category, price ,  duration, departureDate, imageUrl, description} = destination;
+ const { _id,destinationName, country, category, price ,  duration, departureDate, imageUrl, description} = destination;
   const onSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
     const destination = Object.fromEntries(formData.entries());
+    // console.log(destination)
 
-    // try {
-    //   const res = await fetch("http://localhost:5000/destinations", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(destination),
-    //   });
+    try {
+      const res = await fetch(` http://localhost:5000/destinations/${_id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(destination),
+      });
 
-    //   const data = await res.json();
-    //   console.log("Success:", data);
-    // } catch (error) {
-    //   console.error("Error submitting form:", error);
-    // }
+      const data = await res.json();
+      console.log("Success:", data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (

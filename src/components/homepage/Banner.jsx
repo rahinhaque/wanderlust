@@ -1,62 +1,93 @@
-import { Separator } from "@heroui/react";
+import React from "react";
 import Link from "next/link";
 
 const Banner = () => {
   return (
-    <div className="bg-[url('/assets/banner.png')] text-white flex justify-between flex-col items-center gap-5 h-200 relative overflow-hidden">
-      {/* Animated overlay gradient */}
-      <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black/30 animate-pulse"></div>
-      
-      <div className="p-10 text-center space-y-3 flex justify-center flex-col items-center gap-3.5 flex-1 relative z-10">
-        <h1 className="text-7xl font-bold transition-all duration-500 hover:scale-105 hover:text-cyan-200 animate-fade-in">
-          Discover Your <br /> Next Adventure
+    <div className="relative w-full bg-[url('/assets/banner.png')] bg-cover bg-center text-white flex flex-col justify-between items-center min-h-[600px] md:min-h-[700px] lg:min-h-[85vh] overflow-hidden mt-20">
+      {/* 1. Improved Overlay: Darker at the top for navbar readability, pulse effect kept subtle */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/40 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-cyan-900/10 animate-pulse pointer-events-none"></div>
+
+      {/* 2. Main Content Area */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center items-center text-center px-4 sm:px-6 md:px-10 mt-16 md:mt-0">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight transition-all duration-500 hover:scale-[1.02] animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          Discover Your <br className="hidden sm:block" />
+          <span className="text-cyan-400">Next Adventure</span>
         </h1>
 
-        <p className="text-2xl transition-all duration-500 hover:scale-105 hover:text-cyan-100 animate-fade-in-delay">
+        <p className="mt-4 text-base sm:text-lg md:text-xl text-gray-200 max-w-2xl transition-all duration-500 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
           Explore breathtaking destinations and create unforgettable memories
-          with <br /> our curated travel experiences.
+          with our curated travel experiences.
         </p>
 
-        <div className="flex gap-5">
-          <button className="uppercase bg-cyan-500 px-5 py-3 cursor-pointer transition-all duration-300 hover:bg-cyan-600 hover:scale-110 hover:shadow-xl hover:shadow-cyan-500/50 transform hover:-translate-y-1">
+        {/* Action Buttons */}
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <button className="uppercase bg-cyan-500 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:bg-cyan-600 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/40 active:scale-95">
             Explore Now
           </button>
 
-          <Link href={"/destinations"} className="uppercase px-5 py-3 bg-white/50 cursor-pointer transition-all duration-300 hover:bg-white/70 hover:scale-110 hover:shadow-xl hover:shadow-white/30 transform hover:-translate-y-1">
-            View Destination
+          <Link
+            href="/destinations"
+            className="uppercase px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg font-bold transition-all duration-300 hover:bg-white/20 hover:scale-105 active:scale-95 text-center"
+          >
+            View Destinations
           </Link>
         </div>
       </div>
 
-      <div className="bg-white/30 backdrop-blur-sm flex justify-between gap-5 w-full items-center transition-all duration-300 hover:bg-white/40 hover:shadow-lg">
-        <div className="px-3 group cursor-pointer transition-all duration-300 hover:scale-105">
-          <h3 className="text-sm group-hover:text-cyan-200 transition-colors">Location</h3>
-          <p className="text-xs group-hover:text-white transition-colors">Address, City or Zip</p>
-        </div>
+      {/* 3. Bottom Search Bar: Responsive Grid Strategy */}
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 pb-10">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-2 sm:p-3 flex flex-col lg:flex-row items-stretch lg:items-center gap-2 shadow-2xl">
+          {/* Search Inputs Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 flex-1">
+            {/* Location */}
+            <div className="p-4 hover:bg-white/5 rounded-xl transition-colors cursor-pointer group">
+              <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">
+                Location
+              </h3>
+              <p className="text-sm truncate text-gray-200 group-hover:text-white">
+                Where to?
+              </p>
+            </div>
 
-        <Separator variant="tertiary" orientation="vertical" />
+            {/* Date */}
+            <div className="p-4 border-l border-white/10 hover:bg-white/5 rounded-xl transition-colors cursor-pointer group">
+              <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">
+                Date
+              </h3>
+              <p className="text-sm truncate text-gray-200 group-hover:text-white">
+                When?
+              </p>
+            </div>
 
-        <div className="group cursor-pointer transition-all duration-300 hover:scale-105">
-          <h3 className="text-sm group-hover:text-cyan-200 transition-colors">Date/Duration</h3>
-          <p className="text-xs group-hover:text-white transition-colors">Anytime/3 Days</p>
-        </div>
+            {/* Budget */}
+            <div className="p-4 border-l border-white/10 hover:bg-white/5 rounded-xl transition-colors cursor-pointer group">
+              <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">
+                Budget
+              </h3>
+              <p className="text-sm truncate text-gray-200 group-hover:text-white">
+                $500 - $3000
+              </p>
+            </div>
 
-        <Separator variant="tertiary" orientation="vertical" />
+            {/* People */}
+            <div className="p-4 border-l border-white/10 hover:bg-white/5 rounded-xl transition-colors cursor-pointer group">
+              <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">
+                People
+              </h3>
+              <p className="text-sm truncate text-gray-200 group-hover:text-white">
+                2 Adults
+              </p>
+            </div>
+          </div>
 
-        <div className="group cursor-pointer transition-all duration-300 hover:scale-105">
-          <h3 className="text-sm group-hover:text-cyan-200 transition-colors">Budget</h3>
-          <p className="text-xs group-hover:text-white transition-colors">$0-$3000</p>
-        </div>
-
-        <Separator variant="tertiary" orientation="vertical" />
-
-        <div className="group cursor-pointer transition-all duration-300 hover:scale-105">
-          <h3 className="text-sm group-hover:text-cyan-200 transition-colors">People</h3>
-          <p className="text-xs group-hover:text-white transition-colors">5-10</p>
-        </div>
-
-        <div className="bg-cyan-500 py-2 px-4 transition-all duration-300 hover:bg-cyan-600 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/50 cursor-pointer transform hover:-translate-y-1">
-          <h3 className="font-semibold">Search</h3>
+          {/* Search Button */}
+          <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-4 lg:py-0 lg:px-10 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-cyan-500/20">
+            <span className="lg:hidden text-sm uppercase tracking-widest">
+              Search Experiences
+            </span>
+            <span className="hidden lg:block">Search</span>
+          </button>
         </div>
       </div>
     </div>

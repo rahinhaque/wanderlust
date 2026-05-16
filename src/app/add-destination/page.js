@@ -48,19 +48,19 @@ const AddDestination = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-blue-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-blue-50 py-8 md:py-12 px-4">
       {/* Header */}
-      <div className="max-w-4xl mx-auto mb-12 text-center animate-fade-in">
-        <h1 className="text-5xl font-bold text-gray-800 mb-4 transition-all duration-500 hover:scale-105">
+      <div className="max-w-4xl mx-auto mb-8 md:mb-12 text-center animate-fade-in">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-4 transition-all duration-500 hover:scale-105">
           Add New Destination
         </h1>
-        <p className="text-xl text-gray-600 transition-all duration-500 hover:text-cyan-600">
+        <p className="text-base md:text-xl text-gray-600 transition-all duration-500 hover:text-cyan-600">
           Share amazing travel destinations with the world
         </p>
       </div>
 
       {/* Form Container */}
-      <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-8 md:p-12 transition-all duration-500 hover:shadow-3xl animate-fade-in-delay">
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-12 transition-all duration-500 hover:shadow-3xl animate-fade-in-delay">
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Destination Name */}
@@ -188,7 +188,7 @@ const AddDestination = () => {
                   <img 
                     src={formData.imageUrl} 
                     alt="Destination preview" 
-                    className="w-full h-48 object-cover"
+                    className="w-full h-32 sm:h-48 object-cover"
                     onError={(e) => {
                       e.target.style.display = 'none';
                     }}
@@ -211,7 +211,7 @@ const AddDestination = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-4 pt-6">
+          <div className="flex flex-col sm:flex-row gap-4 pt-6">
             <Button
               type="submit"
               disabled={isSubmitting}
@@ -242,7 +242,7 @@ const AddDestination = () => {
                 imageUrl: '',
                 description: ''
               })}
-              className="px-8 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-4 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg"
+              className="w-full sm:w-auto px-8 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-4 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg"
             >
               Clear Form
             </Button>

@@ -1,11 +1,19 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 
 const Banner = () => {
   return (
-    <div className="relative w-full bg-[url('/assets/banner.png')] bg-cover bg-center text-white flex flex-col justify-between items-center min-h-[600px] md:min-h-[700px] lg:min-h-[85vh] overflow-hidden mt-20">
-      {/* 1. Improved Overlay: Darker at the top for navbar readability, pulse effect kept subtle */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/40 pointer-events-none"></div>
+    <div
+      className="relative w-full bg-cover bg-center text-white flex flex-col justify-between items-center min-h-[600px] md:min-h-[700px] lg:min-h-[85vh] overflow-hidden mt-20"
+      style={{
+        // Using inline style ensures Vercel reads the path correctly
+        backgroundImage:
+          "linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url('/assets/Banner.png')",
+      }}
+    >
+      {/* 1. Pulse Overlay (Subtle animation kept separately) */}
       <div className="absolute inset-0 bg-cyan-900/10 animate-pulse pointer-events-none"></div>
 
       {/* 2. Main Content Area */}
@@ -22,9 +30,12 @@ const Banner = () => {
 
         {/* Action Buttons */}
         <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <button className="uppercase bg-cyan-500 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:bg-cyan-600 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/40 active:scale-95">
+          <Link
+            href="/destinations"
+            className="uppercase bg-cyan-500 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:bg-cyan-600 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/40 active:scale-95 text-center"
+          >
             Explore Now
-          </button>
+          </Link>
 
           <Link
             href="/destinations"
@@ -35,7 +46,7 @@ const Banner = () => {
         </div>
       </div>
 
-      {/* 3. Bottom Search Bar: Responsive Grid Strategy */}
+      {/* 3. Bottom Search Bar */}
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 pb-10">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-2 sm:p-3 flex flex-col lg:flex-row items-stretch lg:items-center gap-2 shadow-2xl">
           {/* Search Inputs Grid */}

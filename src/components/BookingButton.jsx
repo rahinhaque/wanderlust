@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { image } from "framer-motion/client";
 
 const BookingButton = ({ destination, user }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +24,7 @@ const BookingButton = ({ destination, user }) => {
       userName: user.name,
       userEmail: user.email,
       country: destination.country,
+      imageUrl: destination.imageUrl,
       bookingDate: new Date().toISOString(),
     }; 
     console.log(bookingData)

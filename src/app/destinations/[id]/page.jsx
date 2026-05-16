@@ -3,15 +3,25 @@ import Link from "next/link";
 import Image from "next/image";
 import { EditModal } from "@/components/EditModal";
 import { DeleteConfirmationModal } from "@/components/DeleteModal";
+import BookingButton from "@/components/BookingButton";
+import { auth } from "@/lib/auth"; // Import your server-side auth config
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
 const DestinationDetails = async ({ params }) => {
   const { id } = await params;
 
+  // Fetch session on the server side
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const user = session?.user;
+
   let destination = null;
 
   try {
+    // Fetching from your Node.js API
     const res = await fetch(`http://127.0.0.1:5000/destinations/${id}`, {
       cache: "no-store",
     });
@@ -43,26 +53,24 @@ const DestinationDetails = async ({ params }) => {
 
   return (
     <div className="bg-white min-h-screen pb-20 mt-20">
-      {/* Top bar - Responsive Flex */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      {/* Top bar */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center gap-4">
         <Link
           href="/destinations"
           className="text-gray-600 hover:text-black flex items-center gap-2 font-medium transition-colors"
         >
-          ← <span className="hidden sm:inline">Back to Destinations</span>
-          <span className="sm:hidden">Back</span>
+          ← <span>Back to Destinations</span>
         </Link>
 
-        {/* Action Buttons - Ensuring visibility */}
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+        <div className="flex items-center gap-2">
           <EditModal destination={destination} />
           <DeleteConfirmationModal destination={destination} />
         </div>
       </div>
 
-      {/* Hero Image - Responsive Height */}
+      {/* Hero Image */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="relative w-full h-[250px] sm:h-[350px] md:h-[450px]">
+        <div className="relative w-full h-[250px] sm:h-[450px]">
           <Image
             src={destination.imageUrl}
             alt={destination.destinationName}
@@ -74,8 +82,7 @@ const DestinationDetails = async ({ params }) => {
       </div>
 
       {/* Content Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
-        {/* LEFT SIDE: Info */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <div className="border-b pb-6">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
@@ -84,21 +91,17 @@ const DestinationDetails = async ({ params }) => {
             <p className="text-gray-500 mt-2 text-lg">
               {destination.city}, {destination.country}
             </p>
-
-            <div className="flex flex-wrap items-center gap-4 mt-4 text-sm font-medium">
-              <span className="flex items-center gap-1 bg-yellow-50 text-yellow-700 px-3 py-1 rounded-full">
+            <div className="flex items-center gap-4 mt-4 text-sm font-medium">
+              <span className="bg-yellow-50 text-yellow-700 px-3 py-1 rounded-full">
                 ⭐ {destination.rating || 4.5}
               </span>
-              <span className="text-gray-300">|</span>
-              <span className="text-gray-600 flex items-center gap-1">
-                ⏱ {destination.duration}
-              </span>
+              <span className="text-gray-600">⏱ {destination.duration}</span>
             </div>
           </div>
 
           <div className="mt-8">
             <h2 className="text-2xl font-bold text-gray-900">Overview</h2>
-            <p className="text-gray-600 mt-4 leading-relaxed text-base sm:text-lg">
+            <p className="text-gray-600 mt-4 leading-relaxed">
               {destination.description}
             </p>
           </div>
@@ -106,39 +109,34 @@ const DestinationDetails = async ({ params }) => {
 
         {/* RIGHT SIDEBAR: Booking Card */}
         <div className="relative">
-          <div className="lg:sticky lg:top-24 border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-xl shadow-gray-100 bg-white">
-            <p className="text-gray-500 text-sm font-medium">Total Price</p>
+          <div className="lg:sticky lg:top-24 border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-xl bg-white">
+            <p className="text-gray-500 text-sm">Total Price</p>
             <div className="flex items-baseline gap-1 mt-1">
               <h2 className="text-4xl font-black text-blue-600">
                 ${destination.price}
               </h2>
-              <span className="text-gray-400 font-medium">/person</span>
+              <span className="text-gray-400">/person</span>
             </div>
 
             <div className="mt-6 space-y-4">
               <div>
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                <label className="text-xs font-bold text-gray-400 uppercase">
                   Departure Date
                 </label>
                 <input
                   type="date"
-                  className="w-full mt-1 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full mt-1 border border-gray-200 rounded-xl p-3 outline-none"
                   defaultValue={dateValue}
                 />
               </div>
 
-              <button className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 hover:shadow-lg transition-all active:scale-95">
-                Book This Trip →
-              </button>
+              {/* Client Component used here */}
+              <BookingButton destination={destination} user={user} />
             </div>
 
-            <div className="mt-6 pt-6 border-t border-gray-50 space-y-3">
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <span className="text-green-500">✓</span> Free cancellation
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <span className="text-green-500">✓</span> Insurance included
-              </div>
+            <div className="mt-6 pt-6 border-t border-gray-50 space-y-3 text-sm text-gray-600">
+              <div>✓ Free cancellation</div>
+              <div>✓ Insurance included</div>
             </div>
           </div>
         </div>

@@ -3,7 +3,17 @@
 import { Button, Input, Label, Modal, Surface, TextField } from "@heroui/react";
 
 export function EditModal({ destination }) {
- const { _id,destinationName, country, category, price ,  duration, departureDate, imageUrl, description} = destination;
+  const {
+    _id,
+    destinationName,
+    country,
+    category,
+    price,
+    duration,
+    departureDate,
+    imageUrl,
+    description,
+  } = destination;
   const onSubmit = async (e) => {
     e.preventDefault();
 
@@ -12,13 +22,16 @@ export function EditModal({ destination }) {
     // console.log(destination)
 
     try {
-      const res = await fetch(` http://localhost:5000/destinations/${_id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        ` https://wanderlust-server-4z29.onrender.com/destinations/${_id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(destination),
         },
-        body: JSON.stringify(destination),
-      });
+      );
 
       const data = await res.json();
       console.log("Success:", data);
@@ -52,7 +65,10 @@ export function EditModal({ destination }) {
             <Modal.Body className="p-6">
               <Surface variant="default">
                 <form onSubmit={onSubmit} className="flex flex-col gap-5">
-                  <TextField defaultValue={destinationName} name="destinationName">
+                  <TextField
+                    defaultValue={destinationName}
+                    name="destinationName"
+                  >
                     <Label>Destination Name</Label>
                     <Input placeholder="Bali Paradise" />
                   </TextField>
@@ -73,7 +89,7 @@ export function EditModal({ destination }) {
                       <Input type="number" placeholder="1299" />
                     </TextField>
 
-                    <TextField  defaultValue={duration} name="duration">
+                    <TextField defaultValue={duration} name="duration">
                       <Label>Duration</Label>
                       <Input placeholder="7 Days / 6 Nights" />
                     </TextField>

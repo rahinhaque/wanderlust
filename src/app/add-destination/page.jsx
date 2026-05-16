@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState } from "react";
 import {
   Button,
   FieldError,
@@ -11,7 +12,6 @@ import {
   ListBox,
 } from "@heroui/react";
 import { motion } from "framer-motion";
-import { object } from "framer-motion/client";
 import {
   MapPinned,
   Globe,
@@ -20,7 +20,8 @@ import {
   ImageIcon,
   Plane,
 } from "lucide-react";
-import React from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -35,31 +36,59 @@ const fadeUp = {
   }),
 };
 
-const onSubmit = async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData(e.currentTarget);
-
-  const destination = Object.fromEntries(formData.entries());
-
-  const res = await fetch("http://localhost:5000/destinations", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(destination),
-  });
-
-  const data = await res.json();
-  console.log(data);
-};
-
 const AddDestination = () => {
+  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setIsPending(true);
+
+    const formData = new FormData(e.currentTarget);
+    const destination = Object.fromEntries(formData.entries());
+
+    // Start loading toast
+    const toastId = toast.loading("Creating your destination...");
+
+    try {
+      const res = await fetch(
+        "https://wanderlust-server-4z29.onrender.com/destinations",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(destination),
+        },
+      );
+
+      if (res.ok) {
+        toast.success("Destination added! ✈️", {
+          id: toastId,
+          description: `${destination.destinationName} is now available for booking.`,
+        });
+
+        e.target.reset(); // Clear form
+        router.push("/destinations"); // Redirect to list
+        router.refresh(); // Refresh server data
+      } else {
+        throw new Error("Failed to save");
+      }
+    } catch (error) {
+      toast.error("Upload failed", {
+        id: toastId,
+        description: "Please check your server connection.",
+      });
+    } finally {
+      setIsPending(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-cyan-950 px-4 py-10 overflow-hidden">
+    <div className="min-h-screen bg-slate-950 px-4 py-10 relative overflow-hidden">
       {/* Glow Effects */}
-      <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl"></div>
-      <div className="absolute bottom-10 right-10 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl"></div>
+      <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl"></div>
+      <div className="absolute bottom-10 right-10 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl"></div>
 
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
@@ -67,13 +96,11 @@ const AddDestination = () => {
         transition={{ duration: 0.6 }}
         className="relative max-w-5xl mx-auto"
       >
-        {/* Card */}
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-[2rem] shadow-2xl p-6 md:p-10">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
             <div className="flex justify-center mb-5">
@@ -81,18 +108,14 @@ const AddDestination = () => {
                 <Plane className="text-cyan-400 w-10 h-10" />
               </div>
             </div>
-
-            <h1 className="text-4xl md:text-5xl font-black bg-linear-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
               Add Destination
             </h1>
-
             <p className="text-slate-400 mt-4 max-w-xl mx-auto">
-              Create beautiful travel experiences and manage destinations with
-              style.
+              Share a new corner of the world with our travelers.
             </p>
           </motion.div>
 
-          {/* Form */}
           <form className="space-y-8" onSubmit={onSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Destination Name */}
@@ -107,17 +130,14 @@ const AddDestination = () => {
                   <Label className="text-slate-200 mb-2">
                     Destination Name
                   </Label>
-
                   <div className="relative">
                     <MapPinned className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-cyan-400 w-5 h-5" />
-
                     <Input
-                      placeholder="Bali Paradise"
-                      className="pl-12 rounded-2xl bg-white/10 border border-white/10 hover:border-cyan-400 focus-within:border-cyan-400 transition-all duration-300 h-14 text-white"
+                      placeholder="e.g. Santorini Sunset"
+                      className="pl-12 rounded-2xl bg-white/10 border border-white/10 text-white h-14 w-full"
                     />
                   </div>
-
-                  <FieldError />
+                  <FieldError className="text-red-400 text-xs mt-1" />
                 </TextField>
               </motion.div>
 
@@ -130,17 +150,13 @@ const AddDestination = () => {
               >
                 <TextField name="country" isRequired>
                   <Label className="text-slate-200 mb-2">Country</Label>
-
                   <div className="relative">
                     <Globe className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-cyan-400 w-5 h-5" />
-
                     <Input
-                      placeholder="Indonesia"
-                      className="pl-12 rounded-2xl bg-white/10 border border-white/10 hover:border-cyan-400 focus-within:border-cyan-400 transition-all duration-300 h-14 text-white"
+                      placeholder="e.g. Greece"
+                      className="pl-12 rounded-2xl bg-white/10 border border-white/10 text-white h-14 w-full"
                     />
                   </div>
-
-                  <FieldError />
                 </TextField>
               </motion.div>
 
@@ -152,20 +168,16 @@ const AddDestination = () => {
                 variants={fadeUp}
               >
                 <Label className="text-slate-200 mb-2 block">Category</Label>
-
                 <Select
                   name="category"
                   isRequired
-                  className="w-full"
                   placeholder="Select category"
                 >
-                  <Select.Trigger className="rounded-2xl bg-white/10 border border-white/10 hover:border-cyan-400 h-14 text-white transition-all duration-300">
+                  <Select.Trigger className="rounded-2xl bg-white/10 border border-white/10 text-white h-14 w-full px-4">
                     <Select.Value />
-                    <Select.Indicator />
                   </Select.Trigger>
-
-                  <Select.Popover>
-                    <ListBox>
+                  <Select.Popover className="bg-slate-900 border border-white/10 rounded-xl">
+                    <ListBox className="text-white p-2">
                       {[
                         "Beach",
                         "Mountain",
@@ -174,9 +186,12 @@ const AddDestination = () => {
                         "Cultural",
                         "Luxury",
                       ].map((item) => (
-                        <ListBox.Item key={item} id={item} textValue={item}>
+                        <ListBox.Item
+                          key={item}
+                          id={item}
+                          className="p-2 hover:bg-white/10 rounded-lg cursor-pointer"
+                        >
                           {item}
-                          <ListBox.ItemIndicator />
                         </ListBox.Item>
                       ))}
                     </ListBox>
@@ -193,18 +208,14 @@ const AddDestination = () => {
               >
                 <TextField name="price" type="number" isRequired>
                   <Label className="text-slate-200 mb-2">Price (USD)</Label>
-
                   <div className="relative">
                     <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-cyan-400 w-5 h-5" />
-
                     <Input
                       type="number"
                       placeholder="1299"
-                      className="pl-12 rounded-2xl bg-white/10 border border-white/10 hover:border-cyan-400 focus-within:border-cyan-400 transition-all duration-300 h-14 text-white"
+                      className="pl-12 rounded-2xl bg-white/10 border border-white/10 text-white h-14 w-full"
                     />
                   </div>
-
-                  <FieldError />
                 </TextField>
               </motion.div>
 
@@ -217,13 +228,10 @@ const AddDestination = () => {
               >
                 <TextField name="duration" isRequired>
                   <Label className="text-slate-200 mb-2">Duration</Label>
-
                   <Input
-                    placeholder="7 Days / 6 Nights"
-                    className="rounded-2xl bg-white/10 border border-white/10 hover:border-cyan-400 focus-within:border-cyan-400 transition-all duration-300 h-14 text-white"
+                    placeholder="e.g. 5 Days / 4 Nights"
+                    className="rounded-2xl bg-white/10 border border-white/10 text-white h-14 w-full px-4"
                   />
-
-                  <FieldError />
                 </TextField>
               </motion.div>
 
@@ -237,17 +245,13 @@ const AddDestination = () => {
               >
                 <TextField name="departureDate" type="date" isRequired>
                   <Label className="text-slate-200 mb-2">Departure Date</Label>
-
                   <div className="relative">
                     <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-cyan-400 w-5 h-5" />
-
                     <Input
                       type="date"
-                      className="pl-12 rounded-2xl bg-white/10 border border-white/10 hover:border-cyan-400 focus-within:border-cyan-400 transition-all duration-300 h-14 text-white"
+                      className="pl-12 rounded-2xl bg-white/10 border border-white/10 text-white h-14 w-full"
                     />
                   </div>
-
-                  <FieldError />
                 </TextField>
               </motion.div>
 
@@ -261,18 +265,14 @@ const AddDestination = () => {
               >
                 <TextField name="imageUrl" isRequired>
                   <Label className="text-slate-200 mb-2">Image URL</Label>
-
                   <div className="relative">
                     <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-cyan-400 w-5 h-5" />
-
                     <Input
                       type="url"
-                      placeholder="https://example.com/bali.jpg"
-                      className="pl-12 rounded-2xl bg-white/10 border border-white/10 hover:border-cyan-400 focus-within:border-cyan-400 transition-all duration-300 h-14 text-white"
+                      placeholder="https://images.unsplash.com/..."
+                      className="pl-12 rounded-2xl bg-white/10 border border-white/10 text-white h-14 w-full"
                     />
                   </div>
-
-                  <FieldError />
                 </TextField>
               </motion.div>
 
@@ -286,18 +286,15 @@ const AddDestination = () => {
               >
                 <TextField name="description" isRequired>
                   <Label className="text-slate-200 mb-2">Description</Label>
-
                   <TextArea
-                    placeholder="Describe the travel experience..."
-                    className="rounded-3xl bg-white/10 border border-white/10 hover:border-cyan-400 focus-within:border-cyan-400 transition-all duration-300 min-h-40 text-white"
+                    placeholder="Provide details about the destination..."
+                    className="rounded-3xl bg-white/10 border border-white/10 text-white p-4 min-h-40 w-full"
                   />
-
-                  <FieldError />
                 </TextField>
               </motion.div>
             </div>
 
-            {/* Button */}
+            {/* Submit Button */}
             <motion.div
               custom={8}
               initial="hidden"
@@ -306,9 +303,10 @@ const AddDestination = () => {
             >
               <Button
                 type="submit"
-                className="w-full h-14 rounded-2xl bg-linear-to-r from-cyan-500 to-blue-600 text-white font-bold text-lg shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+                disabled={isPending}
+                className="w-full h-14 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-lg shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                ✈ Add Destination
+                {isPending ? "Connecting to Server..." : "✈ Add Destination"}
               </Button>
             </motion.div>
           </form>

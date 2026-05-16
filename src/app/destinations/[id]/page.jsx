@@ -23,9 +23,12 @@ const DestinationDetails = async ({ params }) => {
 
   try {
     // 2. Fetch Destination Data from Node.js
-    const res = await fetch(`http://127.0.0.1:5000/destinations/${id}`, {
-      cache: "no-store",
-    });
+   const res = await fetch(
+     `https://wanderlust-server-4z29.onrender.com/destinations/${id}`,
+     {
+       cache: "no-store",
+     },
+   );
 
     if (!res.ok) throw new Error("Failed to fetch destination");
     destination = await res.json();
@@ -33,7 +36,7 @@ const DestinationDetails = async ({ params }) => {
     // 3. Check if this specific user has already booked this trip
     if (user && destination) {
       const checkRes = await fetch(
-        `http://127.0.0.1:5000/bookings/check?userId=${user.id}&destinationId=${id}`,
+        `https://wanderlust-server-4z29.onrender.com/bookings/check?userId=${user.id}&destinationId=${id}`,
         { cache: "no-store" },
       );
       const checkData = await checkRes.json();

@@ -5,9 +5,12 @@ import { MapPin, Calendar, ArrowUpRight, Star } from "lucide-react";
 
 const FeaturedDestination = async () => {
   // Fetch data from your local API
-  const res = await fetch("http://localhost:5000/destinations", {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    "https://wanderlust-server-4z29.onrender.com/destinations",
+    {
+      cache: "no-store",
+    },
+  );
 
   const allDestinations = await res.json();
 

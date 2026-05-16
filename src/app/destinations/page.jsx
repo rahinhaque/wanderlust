@@ -6,9 +6,12 @@ import { MdOutlineDateRange } from "react-icons/md";
 
 const AllDestinations = async () => {
   // Note: Ensure your API endpoint is accessible in your environment
-  const res = await fetch("http://localhost:5000/destinations", {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    "https://wanderlust-server-4z29.onrender.com/destinations",
+    {
+      cache: "no-store",
+    },
+  );
 
   const destinations = await res.json();
 

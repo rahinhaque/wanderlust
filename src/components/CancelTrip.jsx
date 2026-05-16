@@ -4,43 +4,39 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, AlertTriangle, Trash2, Loader2 } from "lucide-react";
 
-
-
-  const CancelTrip = ({ isOpen, onClose, onConfirm, tripName, isLoading }) => {
+const CancelTrip = ({ isOpen, onClose, onConfirm, tripName, isLoading }) => {
   if (!isOpen) return null;
 
+  const handleConfirmCancel = async () => {
+    if (!selectedTrip) return;
 
- const handleConfirmCancel = async () => {
-   if (!selectedTrip) return;
+    try {
+      const res = await fetch(
+        `https://wanderlust-server-4z29.onrender.com/bookings/${selectedTrip._id}`,
+        {
+          method: "DELETE",
+        },
+      );
 
-   try {
-     const res = await fetch(
-       `http://localhost:5000/bookings/${selectedTrip._id}`,
-       {
-         method: "DELETE",
-       },
-     );
+      const data = await res.json();
 
-     const data = await res.json();
+      if (data.success) {
+        // 1. Remove the deleted trip from the local state (instant UI update)
+        setBookings((prev) => prev.filter((b) => b._id !== selectedTrip._id));
 
-     if (data.success) {
-       // 1. Remove the deleted trip from the local state (instant UI update)
-       setBookings((prev) => prev.filter((b) => b._id !== selectedTrip._id));
+        // 2. Close the modal
+        setIsModalOpen(false);
 
-       // 2. Close the modal
-       setIsModalOpen(false);
-
-       // 3. Show success notification
-       toast.success("Trip cancelled successfully");
-     } else {
-       toast.error("Failed to cancel trip");
-     }
-   } catch (error) {
-     console.error("Delete error:", error);
-     toast.error("Something went wrong");
-   }
- };
-
+        // 3. Show success notification
+        toast.success("Trip cancelled successfully");
+      } else {
+        toast.error("Failed to cancel trip");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Something went wrong");
+    }
+  };
 
   return (
     <AnimatePresence>

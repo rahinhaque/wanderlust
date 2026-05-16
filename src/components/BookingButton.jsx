@@ -37,13 +37,16 @@ const BookingButton = ({ destination, user, initialHasBooked }) => {
     };
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/bookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        "https://wanderlust-server-4z29.onrender.com/bookings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bookingData),
         },
-        body: JSON.stringify(bookingData),
-      });
+      );
 
       if (res.ok) {
         setIsBooked(true); // Update UI state immediately

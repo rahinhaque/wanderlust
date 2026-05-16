@@ -25,7 +25,7 @@ const MyTrips = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/bookings/${selectedTrip._id}`,
+        `https://wanderlust-server-4z29.onrender.com/bookings/${selectedTrip._id}`,
         {
           method: "DELETE",
         },
@@ -50,9 +50,12 @@ const MyTrips = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await fetch("http://localhost:5000/bookings", {
-          cache: "no-store",
-        });
+        const res = await fetch(
+          "https://wanderlust-server-4z29.onrender.com/bookings",
+          {
+            cache: "no-store",
+          },
+        );
         const data = await res.json();
         setBookings(data);
       } catch (error) {

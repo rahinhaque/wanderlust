@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { TrashBin } from "@gravity-ui/icons";
 import { Button, Modal } from "@heroui/react";
 
@@ -12,12 +12,15 @@ export function DeleteConfirmationModal({ destination }) {
     console.log("Deleting item with ID:", destination);
 
     try {
-      const res = await fetch(`http://localhost:5000/destinations/${destination._id}`, {
-        method: "DELETE", // Changed from PATCH to DELETE
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `https://wanderlust-server-4z29.onrender.com/destinations/${destination._id}`,
+        {
+          method: "DELETE", // Changed from PATCH to DELETE
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       if (res.ok) {
         const data = await res.json();

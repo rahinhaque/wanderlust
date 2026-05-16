@@ -8,12 +8,14 @@ const Banner = () => {
     <div
       className="relative w-full bg-cover bg-center text-white flex flex-col justify-between items-center min-h-[600px] md:min-h-[700px] lg:min-h-[85vh] overflow-hidden mt-20"
       style={{
-        // Using inline style ensures Vercel reads the path correctly
+        // 1. Matches your confirmed filename: Banner.png
+        // 2. Added a fallback background color so the section isn't invisible
+        backgroundColor: "#020617",
         backgroundImage:
           "linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url('/assets/Banner.png')",
       }}
     >
-      {/* 1. Pulse Overlay (Subtle animation kept separately) */}
+      {/* 1. Pulse Overlay */}
       <div className="absolute inset-0 bg-cyan-900/10 animate-pulse pointer-events-none"></div>
 
       {/* 2. Main Content Area */}
@@ -49,9 +51,7 @@ const Banner = () => {
       {/* 3. Bottom Search Bar */}
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 pb-10">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-2 sm:p-3 flex flex-col lg:flex-row items-stretch lg:items-center gap-2 shadow-2xl">
-          {/* Search Inputs Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 flex-1">
-            {/* Location */}
             <div className="p-4 hover:bg-white/5 rounded-xl transition-colors cursor-pointer group">
               <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">
                 Location
@@ -60,8 +60,6 @@ const Banner = () => {
                 Where to?
               </p>
             </div>
-
-            {/* Date */}
             <div className="p-4 border-l border-white/10 hover:bg-white/5 rounded-xl transition-colors cursor-pointer group">
               <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">
                 Date
@@ -70,8 +68,6 @@ const Banner = () => {
                 When?
               </p>
             </div>
-
-            {/* Budget */}
             <div className="p-4 border-l border-white/10 hover:bg-white/5 rounded-xl transition-colors cursor-pointer group">
               <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">
                 Budget
@@ -80,8 +76,6 @@ const Banner = () => {
                 $500 - $3000
               </p>
             </div>
-
-            {/* People */}
             <div className="p-4 border-l border-white/10 hover:bg-white/5 rounded-xl transition-colors cursor-pointer group">
               <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">
                 People
@@ -91,8 +85,6 @@ const Banner = () => {
               </p>
             </div>
           </div>
-
-          {/* Search Button */}
           <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-4 lg:py-0 lg:px-10 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-cyan-500/20">
             <span className="lg:hidden text-sm uppercase tracking-widest">
               Search Experiences

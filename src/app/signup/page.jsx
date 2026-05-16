@@ -1,19 +1,27 @@
 "use client";
 
-
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { FaGithub, FaGoogle } from "react-icons/fa";
-import { Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
-import { authClient } from "@/lib/auth-client"; // Ensure this path is correct
+import {
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  Loader2,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 const SignUpPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const router = useRouter();
 
+  // --- Email/Password Signup ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -26,7 +34,7 @@ const SignUpPage = () => {
         email,
         password,
         name,
-        callbackURL: "/", // Better Auth will handle redirect if configured
+        callbackURL: "/",
       });
 
       if (error) {
@@ -38,7 +46,6 @@ const SignUpPage = () => {
         toast.success("Welcome to Wanderlust!", {
           description: "Your account has been created successfully.",
         });
-        // Optional: Manual redirect if your auth setup doesn't auto-redirect
         router.push("/");
       }
     } catch (err) {
@@ -46,6 +53,22 @@ const SignUpPage = () => {
         description: "Could not connect to the authentication server.",
       });
     } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // --- Social Signup (Google & Github) ---
+  const handleSocialSignIn = async (provider) => {
+    setIsLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider,
+        callbackURL: "/",
+      });
+    } catch (err) {
+      toast.error(`${provider} Signup Failed`, {
+        description: "Could not connect to the provider.",
+      });
       setIsLoading(false);
     }
   };
@@ -147,11 +170,19 @@ const SignUpPage = () => {
                   </div>
                   <input
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
                     placeholder="••••••••"
-                    className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all text-sm"
+                    className="w-full pl-11 pr-12 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all text-sm"
                   />
+                  {/* Eye Toggle Button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-cyan-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               </div>
 
@@ -204,13 +235,17 @@ const SignUpPage = () => {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98]"
+                  disabled={isLoading}
+                  onClick={() => handleSocialSignIn("google")}
+                  className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98] disabled:opacity-50"
                 >
                   <FaGoogle className="text-red-500" size={16} /> Google
                 </button>
                 <button
                   type="button"
-                  className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98]"
+                  disabled={isLoading}
+                  onClick={() => handleSocialSignIn("github")}
+                  className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98] disabled:opacity-50"
                 >
                   <FaGithub size={18} /> Github
                 </button>

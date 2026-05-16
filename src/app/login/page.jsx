@@ -4,14 +4,16 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
-import { authClient } from "@/lib/auth-client"; // Ensure this path is correct
+import { authClient } from "@/lib/auth-client";
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
+  // --- Email/Password Login ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -38,9 +40,25 @@ const LoginPage = () => {
       }
     } catch (err) {
       toast.error("System Error", {
-        description: "Something went wrong on our end. Please try again.",
+        description: "Something went wrong. Please try again.",
       });
     } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // --- Social Login (Google & Github) ---
+  const handleSocialSignIn = async (provider) => {
+    setIsLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider,
+        callbackURL: "/",
+      });
+    } catch (err) {
+      toast.error(`${provider} Login Failed`, {
+        description: "Could not connect to the provider.",
+      });
       setIsLoading(false);
     }
   };
@@ -48,7 +66,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 lg:bg-white pt-20 lg:pt-0">
       <div className="flex w-full h-screen lg:h-[90vh] max-w-7xl mx-auto overflow-hidden lg:rounded-3xl lg:shadow-2xl lg:border lg:border-gray-100">
-        {/* LEFT SIDE: Brand & Image (Hidden on mobile) */}
+        {/* LEFT SIDE: Brand & Image */}
         <div className="hidden lg:flex lg:w-1/2 relative bg-cyan-900">
           <img
             src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80"
@@ -64,18 +82,15 @@ const LoginPage = () => {
                 Wanderlust
               </span>
             </Link>
-
             <div>
               <h2 className="text-4xl font-bold mb-4 leading-tight">
                 Start your journey <br />
                 with us today.
               </h2>
               <p className="text-cyan-100 text-lg max-w-md">
-                Access exclusive deals, personalized itineraries, and manage
-                your bookings in one place.
+                Access exclusive deals and manage bookings in one place.
               </p>
             </div>
-
             <p className="text-sm text-cyan-200/60">
               © 2026 Wanderlust Travel Media
             </p>
@@ -133,27 +148,19 @@ const LoginPage = () => {
                   </div>
                   <input
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
                     placeholder="••••••••"
-                    className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all text-sm"
+                    className="w-full pl-11 pr-12 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all text-sm"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-cyan-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
-              </div>
-
-              {/* Remember Me */}
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  className="w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500 cursor-pointer"
-                />
-                <label
-                  htmlFor="remember"
-                  className="ml-2 text-sm text-gray-600 cursor-pointer select-none"
-                >
-                  Keep me signed in
-                </label>
               </div>
 
               {/* Submit Button */}
@@ -163,13 +170,10 @@ const LoginPage = () => {
                 className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 group active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
-                  <>
-                    <Loader2 className="animate-spin" size={18} />
-                    Signing in...
-                  </>
+                  <Loader2 className="animate-spin" size={18} />
                 ) : (
                   <>
-                    Sign In
+                    Sign In{" "}
                     <ArrowRight
                       size={18}
                       className="group-hover:translate-x-1 transition-transform"
@@ -190,18 +194,22 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              {/* Social Logins */}
+              {/* Social Buttons */}
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98]"
+                  disabled={isLoading}
+                  onClick={() => handleSocialSignIn("google")}
+                  className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98] disabled:opacity-50"
                 >
                   <FaGoogle className="text-red-500" size={16} />
                   Google
                 </button>
                 <button
                   type="button"
-                  className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98]"
+                  disabled={isLoading}
+                  onClick={() => handleSocialSignIn("github")}
+                  className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98] disabled:opacity-50"
                 >
                   <FaGithub size={18} />
                   Github

@@ -1,19 +1,58 @@
 "use client";
 
-import React from "react";
+
+
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { FaGithub, FaGoogle } from "react-icons/fa";
-import { Mail, Lock, User, ArrowRight } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { authClient } from "@/lib/auth-client"; // Ensure this path is correct
 
 const SignUpPage = () => {
-  const handleSubmit = (e) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle registration logic here
+    setIsLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const { email, password, name } = Object.fromEntries(formData.entries());
+
+    try {
+      const { data, error } = await authClient.signUp.email({
+        email,
+        password,
+        name,
+        callbackURL: "/", // Better Auth will handle redirect if configured
+      });
+
+      if (error) {
+        toast.error("Account Creation Failed", {
+          description:
+            error.message || "Something went wrong. Please try again.",
+        });
+      } else {
+        toast.success("Welcome to Wanderlust!", {
+          description: "Your account has been created successfully.",
+        });
+        // Optional: Manual redirect if your auth setup doesn't auto-redirect
+        router.push("/");
+      }
+    } catch (err) {
+      toast.error("System Error", {
+        description: "Could not connect to the authentication server.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen mt-20 w-full flex items-center justify-center bg-gray-50 lg:bg-white">
-      <div className="flex w-full h-screen overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 lg:bg-white pt-20 lg:pt-0">
+      <div className="flex w-full h-screen lg:h-[90vh] max-w-7xl mx-auto overflow-hidden lg:rounded-3xl lg:shadow-2xl lg:border lg:border-gray-100">
         {/* LEFT SIDE: Brand & Image (Hidden on mobile) */}
         <div className="hidden lg:flex lg:w-1/2 relative bg-blue-900">
           <img
@@ -30,7 +69,6 @@ const SignUpPage = () => {
                 Wanderlust
               </span>
             </Link>
-
             <div>
               <h2 className="text-4xl font-bold mb-4 leading-tight">
                 Adventure awaits <br />
@@ -41,7 +79,6 @@ const SignUpPage = () => {
                 itineraries and member-only pricing.
               </p>
             </div>
-
             <p className="text-sm text-blue-200/60">
               © 2026 Wanderlust Travel Media
             </p>
@@ -51,20 +88,8 @@ const SignUpPage = () => {
         {/* RIGHT SIDE: Signup Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-white overflow-y-auto">
           <div className="w-full max-w-md">
-            {/* Mobile Logo */}
-            <div className="lg:hidden flex justify-center mb-6">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center text-white font-bold">
-                  W
-                </div>
-                <span className="text-xl font-bold text-gray-900 tracking-tight">
-                  Wanderlust
-                </span>
-              </div>
-            </div>
-
             <div className="mb-8 text-center lg:text-left">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
                 Create Account
               </h1>
               <p className="text-gray-500 mt-2">
@@ -73,7 +98,7 @@ const SignUpPage = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Full Name Field */}
+              {/* Full Name */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   Full Name
@@ -83,6 +108,7 @@ const SignUpPage = () => {
                     <User size={18} />
                   </div>
                   <input
+                    name="name"
                     type="text"
                     required
                     placeholder="John Doe"
@@ -91,7 +117,7 @@ const SignUpPage = () => {
                 </div>
               </div>
 
-              {/* Email Field */}
+              {/* Email Address */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   Email Address
@@ -101,6 +127,7 @@ const SignUpPage = () => {
                     <Mail size={18} />
                   </div>
                   <input
+                    name="email"
                     type="email"
                     required
                     placeholder="name@example.com"
@@ -109,7 +136,7 @@ const SignUpPage = () => {
                 </div>
               </div>
 
-              {/* Password Field */}
+              {/* Password */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   Password
@@ -119,6 +146,7 @@ const SignUpPage = () => {
                     <Lock size={18} />
                   </div>
                   <input
+                    name="password"
                     type="password"
                     required
                     placeholder="••••••••"
@@ -129,55 +157,62 @@ const SignUpPage = () => {
 
               <p className="text-[11px] text-gray-500 leading-relaxed">
                 By creating an account, you agree to our{" "}
-                <span className="text-cyan-600 font-bold cursor-pointer">
+                <span className="text-cyan-600 font-bold cursor-pointer hover:underline">
                   Terms of Service
                 </span>{" "}
                 and{" "}
-                <span className="text-cyan-600 font-bold cursor-pointer">
+                <span className="text-cyan-600 font-bold cursor-pointer hover:underline">
                   Privacy Policy
                 </span>
                 .
               </p>
 
-              {/* Register Button */}
+              {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 group active:scale-[0.98]"
+                disabled={isLoading}
+                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 group active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Create Account
-                <ArrowRight
-                  size={18}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
+                {isLoading ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    Create Account
+                    <ArrowRight
+                      size={18}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
+                  </>
+                )}
               </button>
 
-              {/* Divider */}
+              {/* Social Login Section */}
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-100"></div>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-4 text-gray-400 font-medium">
+                  <span className="bg-white px-4 text-gray-400 font-medium whitespace-nowrap">
                     Or sign up with
                   </span>
                 </div>
               </div>
 
-              {/* Social Logins */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98]"
                 >
-                  <FaGoogle className="text-red-500" size={16} />
-                  Google
+                  <FaGoogle className="text-red-500" size={16} /> Google
                 </button>
                 <button
                   type="button"
                   className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98]"
                 >
-                  <FaGithub size={18} />
-                  Github
+                  <FaGithub size={18} /> Github
                 </button>
               </div>
             </form>

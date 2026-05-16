@@ -1,22 +1,52 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { Mail, Lock, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
+import { authClient } from "@/lib/auth-client"; // Ensure this path is correct
 
 const LoginPage = () => {
-  const handleSubmit = (e) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
+    setIsLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const { email, password } = Object.fromEntries(formData.entries());
+
+    try {
+      const { data, error } = await authClient.signIn.email({
+        email,
+        password,
+        callbackURL: "/",
+      });
+
+      if (error) {
+        toast.error("Login Failed", {
+          description: error.message || "Invalid email or password.",
+        });
+      } else {
+        toast.success("Welcome back!", {
+          description: "Successfully signed into Wanderlust.",
+        });
+        router.push("/");
+      }
+    } catch (err) {
+      toast.error("System Error", {
+        description: "Something went wrong on our end. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 lg:bg-white pt-20 lg:pt-0">
-      {/* FIX 1: Added pt-20 on mobile. 
-          This ensures the "Welcome Back" text starts below your fixed Navbar.
-      */}
-
       <div className="flex w-full h-screen lg:h-[90vh] max-w-7xl mx-auto overflow-hidden lg:rounded-3xl lg:shadow-2xl lg:border lg:border-gray-100">
         {/* LEFT SIDE: Brand & Image (Hidden on mobile) */}
         <div className="hidden lg:flex lg:w-1/2 relative bg-cyan-900">
@@ -27,10 +57,10 @@ const LoginPage = () => {
           />
           <div className="relative z-10 p-12 flex flex-col justify-between w-full text-white">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center font-bold text-2xl">
+              <div className="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center font-bold text-2xl text-white">
                 W
               </div>
-              <span className="text-2xl font-bold tracking-tight">
+              <span className="text-2xl font-bold tracking-tight text-white">
                 Wanderlust
               </span>
             </Link>
@@ -55,11 +85,6 @@ const LoginPage = () => {
         {/* RIGHT SIDE: Login Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 md:p-20 bg-white overflow-y-auto">
           <div className="w-full max-w-md">
-            {/* FIX 2: Removed the mobile logo code block entirely. 
-                Since your Navbar is already visible at the top (as seen in your screenshot), 
-                having a second logo here creates the messy overlap.
-            */}
-
             <div className="mb-10 text-center lg:text-left">
               <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
                 Welcome Back
@@ -80,6 +105,7 @@ const LoginPage = () => {
                     <Mail size={18} />
                   </div>
                   <input
+                    name="email"
                     type="email"
                     required
                     placeholder="name@example.com"
@@ -106,6 +132,7 @@ const LoginPage = () => {
                     <Lock size={18} />
                   </div>
                   <input
+                    name="password"
                     type="password"
                     required
                     placeholder="••••••••"
@@ -129,16 +156,26 @@ const LoginPage = () => {
                 </label>
               </div>
 
-              {/* Sign In Button */}
+              {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 group active:scale-[0.98]"
+                disabled={isLoading}
+                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 group active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Sign In
-                <ArrowRight
-                  size={18}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
+                {isLoading ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    Sign In
+                    <ArrowRight
+                      size={18}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
+                  </>
+                )}
               </button>
 
               {/* Divider */}
@@ -153,7 +190,7 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              {/* Social Logins - Side by Side Grid */}
+              {/* Social Logins */}
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"

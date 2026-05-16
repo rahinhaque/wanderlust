@@ -1,14 +1,15 @@
+const dns = require("node:dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
 import { Josefin_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/navbar/Navbar";
 import Footer from "@/components/shared/footer/Footer";
+import { Toaster } from "sonner";
 
 const Josefin = Josefin_Sans({
-  
   subsets: ["latin"],
 });
-
-
 
 export const metadata = {
   title: "Create Next App",
@@ -17,15 +18,16 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="en"
-      className={`${Josefin.className}  h-full antialiased`}
-    >
+    <html lang="en" className={`${Josefin.className} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Navbar/>
-        {children}
-        <Footer/>
-        </body>
+        {/* Sonner Toaster component */}
+        {/* richColors enables the green/red themes for success/error */}
+        <Toaster position="top-center" richColors closeButton />
+
+        <Navbar />
+        <main className="flex-grow">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }

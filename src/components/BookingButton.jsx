@@ -1,12 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
-import { image } from "framer-motion/client";
+import { Loader2, CheckCircle, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
-const BookingButton = ({ destination, user }) => {
+// We pass initialHasBooked from the server-side check we discussed earlier
+const BookingButton = ({ destination, user, initialHasBooked }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isBooked, setIsBooked] = useState(initialHasBooked);
+
+  // Sync state if initialHasBooked changes
+  useEffect(() => {
+    setIsBooked(initialHasBooked);
+  }, [initialHasBooked]);
 
   const handleBooking = async () => {
     if (!user) {
@@ -26,11 +33,10 @@ const BookingButton = ({ destination, user }) => {
       country: destination.country,
       imageUrl: destination.imageUrl,
       bookingDate: new Date().toISOString(),
-    }; 
-    console.log(bookingData)
+      status: "Confirmed", // Default status as seen in your "My Bookings" screenshot
+    };
 
     try {
-      // Sending data to your Node.js Backend
       const res = await fetch("http://127.0.0.1:5000/bookings", {
         method: "POST",
         headers: {
@@ -40,6 +46,7 @@ const BookingButton = ({ destination, user }) => {
       });
 
       if (res.ok) {
+        setIsBooked(true); // Update UI state immediately
         toast.success("Success!", {
           description: `Your trip to ${destination.destinationName} is booked.`,
         });
@@ -56,6 +63,20 @@ const BookingButton = ({ destination, user }) => {
     }
   };
 
+  // State: Already Booked
+  // If the trip is booked, we change the style and link it to the dashboard
+  if (isBooked) {
+    return (
+      <Link href="/my-trips" className="w-full">
+        <button className="w-full bg-green-50 text-green-600 font-bold py-4 rounded-xl border border-green-200 flex items-center justify-center gap-2 hover:bg-green-100 transition-all shadow-sm">
+          <CheckCircle size={20} />
+          Already Booked — View My Trips
+        </button>
+      </Link>
+    );
+  }
+
+  // State: Default/Available to Book
   return (
     <button
       onClick={handleBooking}
@@ -67,7 +88,9 @@ const BookingButton = ({ destination, user }) => {
           <Loader2 className="animate-spin" size={20} /> Processing...
         </>
       ) : (
-        "Book This Trip →"
+        <>
+          Book This Trip <ArrowRight size={18} />
+        </>
       )}
     </button>
   );

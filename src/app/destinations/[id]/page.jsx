@@ -4,7 +4,7 @@ import Image from "next/image";
 import { EditModal } from "@/components/EditModal";
 import { DeleteConfirmationModal } from "@/components/DeleteModal";
 import BookingButton from "@/components/BookingButton";
-import { auth } from "@/lib/auth"; // Import your server-side auth config
+import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
@@ -12,27 +12,38 @@ export const dynamic = "force-dynamic";
 const DestinationDetails = async ({ params }) => {
   const { id } = await params;
 
-  // Fetch session on the server side
+  // 1. Fetch session on the server
   const session = await auth.api.getSession({
     headers: await headers(),
   });
   const user = session?.user;
 
   let destination = null;
+  let hasBooked = false;
 
   try {
-    // Fetching from your Node.js API
+    // 2. Fetch Destination Data from Node.js
     const res = await fetch(`http://127.0.0.1:5000/destinations/${id}`, {
       cache: "no-store",
     });
 
     if (!res.ok) throw new Error("Failed to fetch destination");
     destination = await res.json();
+
+    // 3. Check if this specific user has already booked this trip
+    if (user && destination) {
+      const checkRes = await fetch(
+        `http://127.0.0.1:5000/bookings/check?userId=${user.id}&destinationId=${id}`,
+        { cache: "no-store" },
+      );
+      const checkData = await checkRes.json();
+      hasBooked = checkData.exists;
+    }
   } catch (error) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 text-red-500">
         <div className="text-center">
-          <p className="text-xl font-bold">Failed to load destination data.</p>
+          <p className="text-xl font-bold">Error connecting to server.</p>
           <p className="text-sm mt-2">{error.message}</p>
         </div>
       </div>
@@ -47,28 +58,26 @@ const DestinationDetails = async ({ params }) => {
     );
   }
 
+  // 4. Define dateValue (Fixes your ReferenceError)
   const dateValue = destination.departureDate
     ? new Date(destination.departureDate).toISOString().split("T")[0]
     : "";
 
   return (
     <div className="bg-white min-h-screen pb-20 mt-20">
-      {/* Top bar */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center gap-4">
         <Link
           href="/destinations"
           className="text-gray-600 hover:text-black flex items-center gap-2 font-medium transition-colors"
         >
-          ← <span>Back to Destinations</span>
+          ← Back to Destinations
         </Link>
-
         <div className="flex items-center gap-2">
           <EditModal destination={destination} />
           <DeleteConfirmationModal destination={destination} />
         </div>
       </div>
 
-      {/* Hero Image */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="relative w-full h-[250px] sm:h-[450px]">
           <Image
@@ -81,8 +90,7 @@ const DestinationDetails = async ({ params }) => {
         </div>
       </div>
 
-      {/* Content Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
         <div className="lg:col-span-2">
           <div className="border-b pb-6">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
@@ -98,24 +106,22 @@ const DestinationDetails = async ({ params }) => {
               <span className="text-gray-600">⏱ {destination.duration}</span>
             </div>
           </div>
-
           <div className="mt-8">
             <h2 className="text-2xl font-bold text-gray-900">Overview</h2>
-            <p className="text-gray-600 mt-4 leading-relaxed">
+            <p className="text-gray-600 mt-4 leading-relaxed text-base sm:text-lg">
               {destination.description}
             </p>
           </div>
         </div>
 
-        {/* RIGHT SIDEBAR: Booking Card */}
         <div className="relative">
           <div className="lg:sticky lg:top-24 border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-xl bg-white">
-            <p className="text-gray-500 text-sm">Total Price</p>
+            <p className="text-gray-500 text-sm font-medium">Total Price</p>
             <div className="flex items-baseline gap-1 mt-1">
               <h2 className="text-4xl font-black text-blue-600">
                 ${destination.price}
               </h2>
-              <span className="text-gray-400">/person</span>
+              <span className="text-gray-400 font-medium">/person</span>
             </div>
 
             <div className="mt-6 space-y-4">
@@ -130,13 +136,12 @@ const DestinationDetails = async ({ params }) => {
                 />
               </div>
 
-              {/* Client Component used here */}
-              <BookingButton destination={destination} user={user} />
-            </div>
-
-            <div className="mt-6 pt-6 border-t border-gray-50 space-y-3 text-sm text-gray-600">
-              <div>✓ Free cancellation</div>
-              <div>✓ Insurance included</div>
+              {/* DYNAMIC BUTTON COMPONENT */}
+              <BookingButton
+                destination={destination}
+                user={user}
+                initialHasBooked={hasBooked}
+              />
             </div>
           </div>
         </div>

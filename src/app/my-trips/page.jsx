@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Calendar, Tag, Eye, XCircle, Clock, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 
-const MyTrips = () => {
+const MyTrips = ({}) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -112,9 +113,11 @@ const MyTrips = () => {
                 <button className="flex-1 md:w-32 flex items-center justify-center gap-2 border border-red-200 text-red-500 py-2 px-4 rounded-md hover:bg-red-50 transition-colors text-sm font-bold">
                   <XCircle size={16} /> Cancel
                 </button>
-                <button className="flex-1 md:w-32 flex items-center justify-center gap-2 bg-cyan-500 text-white py-2 px-4 rounded-md hover:bg-cyan-600 transition-colors text-sm font-bold">
-                  <Eye size={16} /> View
-                </button>
+                <Link href={`/destinations/${booking.destinationId}`}>
+                  <button className="flex-1 md:w-32 flex items-center justify-center gap-2 bg-cyan-500 text-white py-2 px-4 rounded-md hover:bg-cyan-600 transition-colors text-sm font-bold">
+                    <Eye size={16} /> View
+                  </button>
+                </Link>
               </div>
             </motion.div>
           ))
